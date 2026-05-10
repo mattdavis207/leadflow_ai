@@ -5,7 +5,8 @@ SET SCHEMA 'leadflow';
 
 CREATE TABLE LEADS (
     lead_id SERIAL,
-    name TEXT,
+    fname TEXT,
+    lname TEXT,
     email TEXT,
     company TEXT,
     message TEXT,

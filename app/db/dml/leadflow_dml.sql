@@ -1,12 +1,12 @@
 SET SCHEMA 'leadflow';
 
 
-CREATE PROCEDURE add_lead(name TEXT, email TEXT, company TEXT, message TEXT, source TEXT)
+CREATE PROCEDURE add_lead(fname TEXT, lname TEXT, email TEXT, company TEXT, message TEXT, source TEXT)
 LANGUAGE plpgsql 
 AS $$
 BEGIN 
-    INSERT INTO LEADS (lead_id, name, email, company, message, source, created_at)
-        VALUES (DEFAULT, name, email, company, message, source, DEFAULT);
+    INSERT INTO LEADS (lead_id, fname, lname, email, company, message, source, created_at)
+        VALUES (DEFAULT, fname, lname, email, company, message, source, DEFAULT);
 END; 
 $$;
 

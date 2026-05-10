@@ -2,12 +2,21 @@
 
 import Papa from 'papaparse';
 import { useState } from 'react';
+import type { LeadRow } from '@/lib/types';
 
 export default function ImportPage() {
 
     const [csvString, setCsvString] = useState("");
     const [headers, setHeaders] = useState<string[]>([]);
 
+    const [parsedData, setParsedData] = useState<LeadRow[]>([]);
+
+
+    const handleImport = () => {
+        
+        
+
+    }
 
     const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -28,7 +37,8 @@ export default function ImportPage() {
                 // confirm type before setting
                 if (typeof text === "string" ){
                     setCsvString(text);
-                    const data = Papa.parse(text, {header: true, delimiter: ','});
+                    const data = Papa.parse<LeadRow>(text, {header: true, delimiter: ','});
+                    setParsedData(data.data);
                     setHeaders(data.meta.fields ?? []);
                     console.log("data: ", data);
                 }
@@ -42,6 +52,7 @@ export default function ImportPage() {
     return (
         <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12">
             <section className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
+                {/* Import file input  */}
                 <label className="flex flex-col gap-3">
                     <span className="text-sm font-medium text-zinc-900">
                         Import CSV File
@@ -61,24 +72,38 @@ export default function ImportPage() {
                             CSV loaded and parsed.
                         </span>
                     ) : null}
-            </label>
-                {headers.length > 0 ? (
-                    <div className="mt-6 border-t border-zinc-200 pt-5">
-                        <h2 className="text-sm font-medium text-zinc-900">
-                            Headers Detected
-                        </h2>
-                        <ul className="mt-3 flex flex-wrap gap-2">
-                            {headers.map((header) => (
-                                <li
-                                    className="rounded-md bg-zinc-100 px-2.5 py-1 text-sm text-zinc-700"
-                                    key={header}
-                                >
-                                    {header}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ) : null}
+                </label>
+                    {/* Headers display list  */}
+                    {headers.length > 0 ? (
+                        <div className="mt-6 border-t border-zinc-200 pt-5">
+                            <h2 className="text-sm font-medium text-zinc-900">
+                                Headers Detected
+                            </h2>
+                            <ul className="mt-3 flex flex-wrap gap-2">
+                                {headers.map((header) => (
+                                    <li
+                                        className="rounded-md bg-zinc-100 px-2.5 py-1 text-sm text-zinc-700"
+                                        key={header}
+                                    >
+                                        {header}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ) : null}
+
+                    {/* Import Button  */}
+                    {csvString ? (
+                        <div className="mt-6 border-t border-zinc-200 pt-5">
+                            <button
+                                className="rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 active:bg-emerald-800"
+                                type="button"
+                                onClick={handleImport}
+                            >
+                                Import Data
+                            </button>
+                        </div>
+                    ): null }
             </section>
         </main>
     );
