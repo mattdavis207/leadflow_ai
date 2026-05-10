@@ -1,4 +1,4 @@
-SET SCHEMA AS 'leadflow';
+SET SCHEMA 'leadflow';
 
 
 CREATE PROCEDURE add_lead(name TEXT, email TEXT, company TEXT, message TEXT, source TEXT)
@@ -6,7 +6,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN 
     INSERT INTO LEADS (lead_id, name, email, company, message, source, created_at)
-        VALUES (DEFAULT, name, email, company, message, source, DEFAULT)
+        VALUES (DEFAULT, name, email, company, message, source, DEFAULT);
 END; 
 $$;
 
@@ -15,6 +15,6 @@ LANGUAGE plpgsql
 AS $$
 BEGIN 
     INSERT INTO LEADS (analysis_id, lead_id, summary, category, urgency, sentiment, suggested_reply, next_action, raw_json, created_at)
-        VALUES (DEFAULT, lead_id, summary, category, urgency, sentiment, suggested_reply, next_action, raw_json, DEFAULT)
+        VALUES (DEFAULT, lead_id, summary, category, urgency, sentiment, suggested_reply, next_action, raw_json, DEFAULT);
 END; 
 $$;

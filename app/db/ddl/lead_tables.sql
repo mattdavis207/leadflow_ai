@@ -1,7 +1,6 @@
+DROP SCHEMA IF EXISTS leadflow CASCADE;
 CREATE SCHEMA leadflow;
-DROP SCHEMA IF EXISTS 'leadflow';
-DROP TABLE IF EXISTS LEADS;
-DROP TABLE IF EXISTS LEADS_ANALYSIS; 
+SET SCHEMA 'leadflow';
 
 
 CREATE TABLE LEADS (
@@ -12,8 +11,8 @@ CREATE TABLE LEADS (
     message TEXT,
     source TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
-    CONSTRAINT lead_pk AS PRIMARY KEY(lead_id)
-)
+    CONSTRAINT lead_pk PRIMARY KEY(lead_id)
+);
 
 CREATE TABLE LEADS_ANALYSIS(
     analysis_id SERIAL,
@@ -25,5 +24,8 @@ CREATE TABLE LEADS_ANALYSIS(
     suggested_reply TEXT,
     next_action TEXT,
     raw_json JSONB,
-    created_at TIMESTAMP DEFAULT NOW()
-)
+    created_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT leads_analysis_pk PRIMARY KEY(analysis_id),
+    CONSTRAINT leads_analysis_fk FOREIGN KEY(lead_id) REFERENCES LEADS(lead_id)
+        ON DELETE CASCADE
+);
