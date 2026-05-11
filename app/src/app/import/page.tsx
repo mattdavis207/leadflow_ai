@@ -12,10 +12,26 @@ export default function ImportPage() {
     const [parsedData, setParsedData] = useState<LeadRow[]>([]);
 
 
-    const handleImport = () => {
-        
-        
+    const handleImport = async () => {
+        try {
+            const response = await fetch("/api/import", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(parsedData)
+            });
 
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log('Message: ', result.message, '\nSuccess: ', result.success, '\nTotal rows imported: ', result.importedCount);
+
+        } catch (err){
+            console.error('Error:', err);
+        }
     }
 
     const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +61,6 @@ export default function ImportPage() {
             }
 
             reader.readAsText(file);
-
         }
     }
 

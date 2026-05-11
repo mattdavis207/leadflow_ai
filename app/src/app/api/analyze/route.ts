@@ -1,2 +1,4 @@
 /* This file will contain the Next.js API endpoint for taking the lead data and calling OpenAI API to analyze 
 and spit out a response */
+
+export {};

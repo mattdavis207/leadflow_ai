@@ -1,2 +1,4 @@
 /* This file will contain the Next.js API endpoint for taking the lead data from postgresql and returning 
 it to the frontend to be displayed in the dashboard*/
+
+export {};
