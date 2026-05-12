@@ -10,7 +10,7 @@ export async function GET(){
 
         const data = await db.query(text);
 
-        return NextResponse.json({ data })
+        return NextResponse.json({ leads: data.rows })
 
     } catch (err){
         return NextResponse.json({

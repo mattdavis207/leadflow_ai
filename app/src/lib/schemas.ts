@@ -8,7 +8,7 @@ const LeadRowSchema = z.object({
     email: z.string().email(),
     company: z.string(),
     message: z.string(),
-    source: z.string()
+    source: z.string(),
 });
 
 export const ImportLeadsSchema = z.array(LeadRowSchema);

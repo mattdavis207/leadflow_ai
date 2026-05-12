@@ -5,6 +5,7 @@ import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 import {
     DropdownMenu,
@@ -16,14 +17,21 @@ import {
   } from "@/components/ui/dropdown-menu"
 
 export type DBLeadRow = {
-    lead_id: number,
+    lead_id: string,
     fname: string,
     lname: string,
     email: string,
     company: string,
     message: string,
     source: string,
-    created_at: string
+    created_at: string,
+    analysis_status: "Pending" | "Complete" | "Failed",
+    summary: string | null,
+    category: string | null,
+    urgency: string | null,
+    sentiment: string | null,
+    suggested_reply: string | null,
+    next_action: string | null,
 }
 
 export const columns: ColumnDef<DBLeadRow>[] = [
@@ -106,6 +114,29 @@ export const columns: ColumnDef<DBLeadRow>[] = [
         accessorKey: "created_at",
         header: "Created At"
     },
+    {
+        accessorKey: "analysis_status",
+        header: "Analysis Status",
+        cell: ({ row }) => {
+          const analysis_status = row.getValue(
+            "analysis_status"
+          ) as DBLeadRow["analysis_status"]
+
+          // conditional rendering based on value of analysis status, simple object key value pairs
+          const statusClassName: Record<DBLeadRow["analysis_status"], string> = {
+            Pending: "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
+            Complete: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300",
+            Failed: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+          }
+
+          return (
+            <Badge className={statusClassName[analysis_status]}>
+                {analysis_status}
+            </Badge>
+
+          );
+        }
+    },
     // action dropdown menu
     {
         id: "actions",
@@ -140,4 +171,3 @@ export const columns: ColumnDef<DBLeadRow>[] = [
         },
       },
 ]
-

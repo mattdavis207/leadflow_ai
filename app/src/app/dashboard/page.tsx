@@ -22,7 +22,7 @@ export default function Dashboard() {
                 const json = await response.json();
                 
                 // map json to the rows 
-                const rows = json.data.rows;
+                const rows = json.leads;
                 const leads: DBLeadRow[] = rows.map((row: DBLeadRow) => ({
                     lead_id: row.lead_id,
                     fname: row.fname,
@@ -32,6 +32,13 @@ export default function Dashboard() {
                     message: row.message,
                     source: row.source,
                     created_at: new Date(row.created_at),
+                    analysis_status: row.analysis_status,
+                    summary: row.summary,
+                    category: row.category,
+                    urgency: row.urgency,
+                    sentiment: row.sentiment,
+                    suggested_reply: row.suggested_reply,
+                    next_action: row.next_action,
                 }));
                 
                 setData(leads);

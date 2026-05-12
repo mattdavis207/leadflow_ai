@@ -2,6 +2,8 @@ DROP SCHEMA IF EXISTS leadflow CASCADE;
 CREATE SCHEMA leadflow;
 SET SCHEMA 'leadflow';
 
+CREATE DOMAIN status_dom AS VARCHAR(15)
+CHECK (VALUE IN ('Pending', 'Complete', 'Failed'));
 
 CREATE TABLE LEADS (
     lead_id SERIAL,
@@ -12,6 +14,7 @@ CREATE TABLE LEADS (
     message TEXT,
     source TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
+    analysis_status status_dom DEFAULT 'Pending',
     CONSTRAINT lead_pk PRIMARY KEY(lead_id)
 );
 
