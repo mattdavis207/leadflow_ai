@@ -111,7 +111,7 @@ export default function ImportPage() {
                     {csvString ? (
                         <div className="mt-6 border-t border-zinc-200 pt-5">
                             <button
-                                className="rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 active:bg-emerald-800"
+                                className="rounded-lg bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 active:bg-emerald-800"
                                 type="button"
                                 onClick={handleImport}
                             >

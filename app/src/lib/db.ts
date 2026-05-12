@@ -8,7 +8,7 @@ const pool = new Pool({
     connectionTimeoutMillis: 2000,
 })
 
-export const query = async (text: string, params: unknown[]) => {
+export const query = async (text: string, params?: unknown[]) => {
     const start = Date.now();
     const res = await pool.query(text, params);
     const duration = Date.now() - start;

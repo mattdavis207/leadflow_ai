@@ -18,3 +18,27 @@ BEGIN
         VALUES (DEFAULT, lead_id, summary, category, urgency, sentiment, suggested_reply, next_action, raw_json, DEFAULT);
 END; 
 $$;
+
+CREATE FUNCTION get_leads()
+RETURNS SETOF LEADS 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * 
+    FROM LEADS
+    ORDER BY created_at ASC;
+END;
+$$;
+
+CREATE FUNCTION get_lead_by_id(lead_id INTEGER)
+RETURNS SETOF LEADS 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * 
+    FROM LEADS
+    WHERE lead_id = get_lead_by_id.lead_id;
+END;
+$$;
