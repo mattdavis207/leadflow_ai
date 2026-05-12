@@ -1,7 +1,7 @@
 
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -34,7 +34,10 @@ export const columns: ColumnDef<DBLeadRow>[] = [
             const lead = row.original 
 
             return (
-                <Link href={`/leads/${lead.lead_id}`}>
+                <Link
+                    className="font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline"
+                    href={`/leads/${lead.lead_id}`}
+                >
                     View lead
                 </Link>
             );
@@ -47,15 +50,45 @@ export const columns: ColumnDef<DBLeadRow>[] = [
     },
     {
         accessorKey: "fname",
-        header: "First Name"
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              First Name
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          )
+        },
     },
     {
         accessorKey: "lname",
-        header: "Last Name"
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Last Name
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          )
+        },
     },
     {
         accessorKey: "email",
-        header: "Email"
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Email
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          )
+        },
     },
     {
         accessorKey: "company",
@@ -107,5 +140,4 @@ export const columns: ColumnDef<DBLeadRow>[] = [
         },
       },
 ]
-
 
