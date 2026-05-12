@@ -31,7 +31,7 @@ BEGIN
 END;
 $$;
 
-CREATE FUNCTION get_lead_by_id(lead_id INTEGER)
+CREATE FUNCTION get_lead_by_id(p_lead_id INTEGER)
 RETURNS SETOF LEADS 
 LANGUAGE plpgsql
 AS $$
@@ -39,6 +39,6 @@ BEGIN
     RETURN QUERY
     SELECT * 
     FROM LEADS
-    WHERE lead_id = get_lead_by_id.lead_id;
+    WHERE LEADS.lead_id = p_lead_id;
 END;
 $$;
