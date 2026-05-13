@@ -1,36 +1,203 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Leadflow AI
 
-## Getting Started
+Leadflow AI is a full-stack lead intake and analysis dashboard. It imports customer lead data from CSV, saves the raw leads to PostgreSQL, and uses the OpenAI API to generate structured sales intelligence such as summary, urgency, category, sentiment, suggested reply, and next action.
 
-First, run the development server:
+## Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Product Walkthrough Video
+
+<video src="public/demo/Demo_Video_Leadflow_AI.mp4" controls width="100%">
+  Your browser does not support the video tag.
+</video>
+
+[Watch the demo video](public/demo/Demo_Video_Leadflow_AI.mp4)
+
+### Screenshots
+
+Place screenshots in `public/screenshots/` and update the paths below.
+
+#### CSV Import
+
+![CSV import screen](public/screenshots/import.png)
+
+#### Leads Dashboard
+
+![Dashboard table](public/screenshots/dashboard.png)
+
+#### Lead Detail Before Analysis
+
+![Lead detail pending analysis](public/screenshots/lead-detail-pending.png)
+
+#### Lead Detail With AI Analysis
+
+![Lead detail analyzed](public/screenshots/lead-detail-analyzed.png)
+
+## Core Features
+
+- CSV upload and parsing for lead rows.
+- Runtime validation with Zod before backend processing.
+- PostgreSQL persistence for imported leads.
+- Dashboard table with sorting, filtering, pagination, column visibility, and row actions.
+- Bulk analysis for all pending leads.
+- Single-lead analysis from the dashboard actions menu or lead detail page.
+- OpenAI structured output for predictable AI-generated fields.
+- Lead detail pages with raw lead data and AI analysis cards.
+- Loading states and disabled buttons to prevent duplicate analysis clicks.
+
+## Tech Stack
+
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- TanStack Table
+- PostgreSQL
+- Docker Compose
+- node-postgres (`pg`)
+- OpenAI API
+- Zod
+- Papa Parse
+
+## Application Flow
+
+```text
+CSV upload
+  -> parse rows in browser
+  -> POST /api/import
+  -> validate request body with Zod
+  -> save leads to PostgreSQL with Pending analysis status
+
+Dashboard
+  -> GET /api/leads
+  -> render joined lead + analysis rows
+  -> filter, sort, paginate, view details
+
+AI analysis
+  -> POST /api/analyze for bulk pending leads
+  -> POST /api/analyze/[id] for one lead
+  -> fetch pending lead data from PostgreSQL
+  -> send chunks to OpenAI
+  -> save structured analysis to leads_analysis
+  -> update lead status to Complete
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data Model
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app keeps raw lead data and AI-generated analysis separate.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```text
+leads
+  lead_id
+  fname
+  lname
+  email
+  company
+  message
+  source
+  created_at
+  analysis_status
 
-## Learn More
+leads_analysis
+  analysis_id
+  lead_id
+  summary
+  category
+  urgency
+  sentiment
+  suggested_reply
+  next_action
+  raw_json
+  created_at
+```
 
-To learn more about Next.js, take a look at the following resources:
+Dashboard data is read with a left join so pending leads still appear even before analysis exists.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Local Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Install dependencies:
 
-## Deploy on Vercel
+```bash
+pnpm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Create an environment file:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+cp .env.example .env
+```
+
+Set your OpenAI API key:
+
+```env
+OPENAI_API_KEY="your_api_key_here"
+OPENAI_MODEL="gpt-5-mini"
+```
+
+Start PostgreSQL:
+
+```bash
+pnpm db:up
+```
+
+Reset and initialize the database schema/procedures:
+
+```bash
+pnpm db:reset
+```
+
+Start the app:
+
+```bash
+pnpm dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+## Useful Scripts
+
+```bash
+pnpm dev        # Start Next.js locally
+pnpm build      # Build for production
+pnpm lint       # Run ESLint
+pnpm typecheck  # Run TypeScript checks
+pnpm db:up      # Start local PostgreSQL
+pnpm db:down    # Stop local PostgreSQL
+pnpm db:logs    # Tail PostgreSQL logs
+pnpm db:reset   # Drop/recreate schema and database routines
+```
+
+## API Routes
+
+```text
+POST /api/import
+  Save parsed CSV rows to PostgreSQL.
+
+GET /api/leads
+  Return all leads with optional analysis fields.
+
+GET /api/leads/[id]
+  Return one lead with optional analysis fields.
+
+POST /api/analyze
+  Analyze all pending leads in chunks.
+
+POST /api/analyze/[id]
+  Analyze a single pending lead.
+```
+
+## Portfolio Notes
+
+This project demonstrates:
+
+- Full-stack TypeScript development with Next.js.
+- Relational data modeling with PostgreSQL.
+- Server-side API route design.
+- CSV ingestion and validation.
+- AI integration using structured model output.
+- Dashboard UI with advanced table interactions.
+- Practical async UI states for long-running AI actions.
