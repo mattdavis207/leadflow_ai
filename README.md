@@ -10,7 +10,7 @@ Leadflow AI is a full-stack lead intake and analysis dashboard. It imports custo
   Your browser does not support the video tag.
 </video>
 
-[Watch the demo video](public/demo/Demo_Video_Leadflow_AI.mp4)
+[Watch the demo video](/public/demo/Demo_Video_Leadflow_AI.mp4)
 
 ### Screenshots
 
@@ -18,19 +18,19 @@ Place screenshots in `public/screenshots/` and update the paths below.
 
 #### CSV Import
 
-![CSV import screen](public/screenshots/import.png)
+![CSV import screen](app/public/screenshots/import.png)
 
 #### Leads Dashboard
 
-![Dashboard table](public/screenshots/dashboard.png)
+![Dashboard table](app/public/screenshots/dashboard.png)
 
 #### Lead Detail Before Analysis
 
-![Lead detail pending analysis](public/screenshots/lead-detail-pending.png)
+![Lead detail pending analysis](app/public/screenshots/lead-detail-pending.png)
 
 #### Lead Detail With AI Analysis
 
-![Lead detail analyzed](public/screenshots/lead-detail-analyzed.png)
+![Lead detail analyzed](app/public/screenshots/lead-detail-analyzed.png)
 
 ## Core Features
 
