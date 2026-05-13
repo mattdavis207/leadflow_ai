@@ -1,10 +1,9 @@
 /* This file will contain the Next.js API endpoint for taking the lead data and calling OpenAI API to analyze 
 and spit out a response */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import * as db from "@/lib/db"
 import { GetLeadAnalysis } from "@/lib/openai/openai_api";
-import type { LeadAnalysisRow } from "@/lib/types";
 
 export async function POST(){
     try {
@@ -51,7 +50,8 @@ export async function POST(){
 
         return NextResponse.json({
             success: true,
-            message: "Leads successfully analyzed."
+            message: "Leads successfully analyzed.",
+            code: 200
         })
 
     } catch (err){

@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState, useCallback } from "react";
-import { columns, DBFullLeadRow } from "./columns";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { getColumns, DBFullLeadRow } from "./columns";
 import { DataTable } from "./data-table";
 
 
@@ -9,6 +9,9 @@ export default function Dashboard() {
 
     const [data, setData] = useState<DBFullLeadRow[]>([])
 
+    // track the set of lead ids being analyzed
+    const [analyzingLeadIds, setAnalyzingLeadIds] = useState<Set<string>>(new Set());
+    const [isAnalyzingPending, setIsAnalyzingPending] = useState(false);
 
     const fetchLeads = useCallback(async () => {
         try{
@@ -48,8 +51,46 @@ export default function Dashboard() {
         
     }, []);
 
+    // fetches analysis for specific lead
+    // caches the function between renders unless the fetchLeads function changes, but thats also stable since it's useCallback function
+    const handleAnalyzeLead = useCallback(async (leadId: string) => {
+        setAnalyzingLeadIds((current) => new Set(current).add(leadId));
+      
+        try {
+          const response = await fetch(`/api/analyze/${leadId}`, {
+            method: "POST",
+          });
+      
+          if (!response.ok) {
+            throw new Error("Failed to analyze lead.");
+          }
+      
+          await fetchLeads();
+        } catch (err) {
+          console.error("Error analyzing lead:", err);
+        } finally {
+          setAnalyzingLeadIds((current) => {
+            const next = new Set(current);
+            next.delete(leadId);
+            return next;
+          });
+        }
+    }, [fetchLeads]);
+      
+    // caches the columns array so it stays the same between renders until either function or state changes for analyzing leads 
+    const tableColumns = useMemo(
+        () =>
+            getColumns({
+                onAnalyzeLead: handleAnalyzeLead,
+                analyzingLeadIds,
+            }),
+        [handleAnalyzeLead, analyzingLeadIds]
+    );
+
     // fetches analysis data for leads
     async function handleAnalyze(){
+        setIsAnalyzingPending(true);
+
         try{
             const response = await fetch("/api/analyze", {
                 method: "POST",
@@ -70,6 +111,8 @@ export default function Dashboard() {
 
         } catch (err){
             console.error("Error analyzing leads:", err);
+        } finally {
+            setIsAnalyzingPending(false);
         }
     }
 
@@ -79,11 +122,18 @@ export default function Dashboard() {
         fetchLeads();
     }, [fetchLeads])
 
+
+
     return (
         <main className="min-h-screen bg-background px-6 py-12">
             <section className="mx-auto w-full max-w-6xl">
                 {data ? 
-                <DataTable columns={columns} data={data} onAnalyzePending={handleAnalyze}/> 
+                <DataTable
+                    columns={tableColumns}
+                    data={data}
+                    onAnalyzePending={handleAnalyze}
+                    isAnalyzingPending={isAnalyzingPending}
+                /> 
                 : null}
             </section>
         </main>

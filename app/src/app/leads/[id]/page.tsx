@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Button } from "@/components/ui/button"
@@ -26,35 +26,60 @@ export default function LeadPage(){
 
     const [lead, setLead] = useState<DBFullLeadRow>();
 
-    useEffect(() => {
-        async function fetchLeadFromId() {
-            try{
-                const response = await fetch(`/api/leads/${id}`)
+    const fetchLeadFromId = useCallback(async () => {
+        if (!id) {
+            return;
+        }
 
-                const result = await response.json();
+        try{
+            const response = await fetch(`/api/leads/${id}`)
 
-                const lead = result.data;
-                
-                setLead(lead);
+            const result = await response.json();
 
-                console.log("lead", lead);
-
-                if (!response.ok){
-                    throw new Error("Failed to fetch lead data.");
-                }
-
-            } catch (err){
-                console.error("Error loading lead:", err);
+            if (!response.ok){
+                throw new Error("Failed to fetch lead data.");
             }
+
+            const lead = result.data;
+            
+            setLead(lead);
+
+            console.log("lead", lead);
+
+        } catch (err){
+            console.error("Error loading lead:", err);
         }
+    }, [id]);
 
-        if (id){
-            fetchLeadFromId();
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchLeadFromId();
+    }, [fetchLeadFromId])
+
+
+    async function handleAnalyzeLead(){
+        try{
+            const response = await fetch(`/api/analyze/${id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok){
+                throw new Error("Failed to analyze lead.");
+            }
+
+            const result = await response.json();
+            console.log("Message: ", result.message);
+
+            // Reload state with updated data
+            await fetchLeadFromId();
+
+        } catch (err){
+            console.error("Error analyzing leads:", err);
         }
-
-    }, [id])
-
-
+    }
 
     const urgencyClassName: Record<LeadAnalysisRow["urgency"], string> = {
         Low: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300",
@@ -72,17 +97,12 @@ export default function LeadPage(){
         <main className="min-h-screen bg-background px-6 py-12">
             <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-2">
                 <Card>
-                    <CardHeader className="grid-cols-[auto_1fr] gap-x-4">
+                    <CardHeader className="grid-cols-[auto_1fr_auto] gap-x-4">
                         <CardAction className="col-start-1 row-span-2 row-start-1 justify-self-start">
                             <Button asChild variant="outline" size="icon"> 
                                 <Link href="/dashboard" aria-label="Back to dashboard">
                                     <IoMdArrowRoundBack />
                                 </Link>
-                            </Button>
-                        </CardAction>
-                        <CardAction>
-                            <Button asChild variant="outline" size="lg">
-
                             </Button>
                         </CardAction>
                         <CardTitle className="col-start-2 text-xl">
@@ -91,6 +111,18 @@ export default function LeadPage(){
                         <CardDescription className="col-start-2">
                             {lead?.company ?? "Loading lead information..."}
                         </CardDescription>
+                        {/* Analyze Button  */}
+                        {lead?.analysis_status === "Pending" ? (
+                            <CardAction className="col-start-3 row-span-2 row-start-1 self-center justify-self-end">
+                                <Button
+                                    className="bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800"
+                                    size="sm"
+                                    onClick={handleAnalyzeLead}
+                                >
+                                    Analyze Lead 
+                                </Button>
+                            </CardAction>
+                        ): null}
                     </CardHeader>
 
                     <CardContent className="space-y-6">

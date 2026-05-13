@@ -3,6 +3,7 @@ DROP PROCEDURE IF EXISTS add_lead;
 DROP PROCEDURE IF EXISTS add_lead_analysis;
 DROP PROCEDURE IF EXISTS update_analysis_status;
 DROP FUNCTION IF EXISTS get_pending_leads;
+DROP FUNCTION IF EXISTS get_pending_leads_id;
 DROP FUNCTION IF EXISTS get_leads_with_analysis;
 DROP FUNCTION IF EXISTS get_lead_by_id;
 
@@ -47,6 +48,19 @@ BEGIN
     FROM LEADS AS L
     WHERE L.analysis_status = 'Pending'
     ORDER BY L.created_at ASC;
+END;
+$$;
+
+CREATE FUNCTION get_pending_leads_id(p_lead_id INTEGER)
+RETURNS SETOF LEADS 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Get all leads
+    RETURN QUERY
+    SELECT *
+    FROM LEADS AS L
+    WHERE L.analysis_status = 'Pending' AND L.lead_id = p_lead_id;
 END;
 $$;
 

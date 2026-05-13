@@ -1,7 +1,7 @@
 
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
+import { MoreHorizontal, ArrowUpDown, Loader2 } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -35,7 +35,16 @@ export type DBFullLeadRow = {
     next_action: string | null,
 }
 
-export const columns: ColumnDef<DBFullLeadRow>[] = [
+type ColumnsOptions = {
+  onAnalyzeLead?: (leadId: string) => Promise<void>;
+  analyzingLeadIds?: Set<string>;
+};
+
+export function getColumns({
+  onAnalyzeLead,
+  analyzingLeadIds,
+}: ColumnsOptions): ColumnDef<DBFullLeadRow>[] {
+  return [
     // View Lead Link 
     {
         id: "view",
@@ -139,9 +148,7 @@ export const columns: ColumnDef<DBFullLeadRow>[] = [
           <Badge className={urgencyClassName[urgency]}>
             {urgency}
           </Badge>
-        ) : (
-          <Badge variant="secondary">Pending</Badge>
-        )
+        ) : null
       }
     },
     {
@@ -160,9 +167,7 @@ export const columns: ColumnDef<DBFullLeadRow>[] = [
           <Badge className={sentimentClassName[sentiment]}>
             {sentiment}
           </Badge>
-        ) : (
-          <Badge variant="secondary">Pending</Badge>
-        )
+        ) : null
       }
     },
     {
@@ -201,6 +206,9 @@ export const columns: ColumnDef<DBFullLeadRow>[] = [
         id: "actions",
         cell: ({ row }) => {
           const lead = row.original
+
+          // for tracking state of lead analysis
+          const isAnalyzing = analyzingLeadIds?.has(lead.lead_id) ?? false;
             
           return (
             <DropdownMenu>
@@ -212,21 +220,29 @@ export const columns: ColumnDef<DBFullLeadRow>[] = [
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                {/* <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(lead.id)}
-                >
-                  Copy lead ID
-                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>   
                     <Link href={`/leads/${lead.lead_id}`}>
                         View lead
                     </Link>
                 </DropdownMenuItem>
-               
+                <DropdownMenuItem
+                  disabled={isAnalyzing || lead.analysis_status !== "Pending" || !onAnalyzeLead}
+                  onClick={() => onAnalyzeLead?.(lead.lead_id)}
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    "Analyze lead"
+                  )}
+                </DropdownMenuItem>
+
               </DropdownMenuContent>
             </DropdownMenu>
           )
         },
       },
-]
+]}

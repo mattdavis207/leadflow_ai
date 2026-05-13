@@ -26,6 +26,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { TbAnalyze } from "react-icons/tb";
+import { Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 import {
@@ -38,13 +39,15 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  onAnalyzePending?: () => Promise<void>
+  onAnalyzePending?: () => Promise<void>,
+  isAnalyzingPending?: boolean
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onAnalyzePending,
+  isAnalyzingPending,
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -121,8 +124,18 @@ export function DataTable<TData, TValue>({
                 </DropdownMenu>
             </div>
 
-            <Button variant="outline" className="rounded-full" onClick={onAnalyzePending}>
-                <TbAnalyze/> Analyze All Pending Leads
+            <Button
+              variant="outline"
+              className="rounded-full"
+              disabled={isAnalyzingPending || !onAnalyzePending}
+              onClick={onAnalyzePending}
+            >
+                {isAnalyzingPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <TbAnalyze />
+                )}
+                {isAnalyzingPending ? "Analyzing..." : "Analyze All Pending Leads"}
             </Button>
                     
             {/* Column Visibility Dropdown  */}
