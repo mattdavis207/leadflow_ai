@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ export default function LeadPage(){
     const id = params.id;
 
     const [lead, setLead] = useState<DBFullLeadRow>();
+    const [isAnalyzingLead, setIsAnalyzingLead] = useState(false);
 
     const fetchLeadFromId = useCallback(async () => {
         if (!id) {
@@ -58,6 +60,8 @@ export default function LeadPage(){
 
 
     async function handleAnalyzeLead(){
+        setIsAnalyzingLead(true);
+
         try{
             const response = await fetch(`/api/analyze/${id}`, {
                 method: "POST",
@@ -78,6 +82,8 @@ export default function LeadPage(){
 
         } catch (err){
             console.error("Error analyzing leads:", err);
+        } finally {
+            setIsAnalyzingLead(false);
         }
     }
 
@@ -114,13 +120,17 @@ export default function LeadPage(){
                         {/* Analyze Button  */}
                         {lead?.analysis_status === "Pending" ? (
                             <CardAction className="col-start-3 row-span-2 row-start-1 self-center justify-self-end">
-                                <Button
-                                    className="bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800"
-                                    size="sm"
-                                    onClick={handleAnalyzeLead}
-                                >
-                                    Analyze Lead 
-                                </Button>
+	                                <Button
+	                                    className="bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800"
+                                        disabled={isAnalyzingLead}
+	                                    size="sm"
+	                                    onClick={handleAnalyzeLead}
+	                                >
+                                        {isAnalyzingLead ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : null}
+	                                    {isAnalyzingLead ? "Analyzing..." : "Analyze Lead"} 
+	                                </Button>
                             </CardAction>
                         ): null}
                     </CardHeader>
