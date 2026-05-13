@@ -6,7 +6,7 @@ import * as db from "@/lib/db"
 
 export async function GET(){
     try {
-        const text = 'SELECT * FROM get_leads();'
+        const text = 'SELECT * FROM get_leads_with_analysis();'
 
         const data = await db.query(text);
 

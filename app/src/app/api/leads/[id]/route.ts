@@ -10,14 +10,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{i
 
         const data = await db.query(text, [Number(id)]);
 
-        if (!data.rows){
+        if (data.rows.length === 0 ){
             return NextResponse.json(
                 {
                 data: data.rows[0],
                 success: false,
-                message: "Lead data retrieved successfully",
+                message: "Lead data not retrieved.",
                 },
-                { status: 200 }
+                { status: 404 }
             )
         }
 

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
+import { TbAnalyze } from "react-icons/tb";
 import { Input } from "@/components/ui/input"
 
 import {
@@ -37,11 +38,13 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  onAnalyzePending?: () => Promise<void>
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onAnalyzePending,
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -81,6 +84,7 @@ export function DataTable<TData, TValue>({
     <div className="w-full">
         <div className="flex items-center py-4">
             
+            {/* Search Input for Filtering  */}
             <Input
             placeholder={`Filter ${filterColumn}...`}
             value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
@@ -89,7 +93,8 @@ export function DataTable<TData, TValue>({
             }
             className="max-w-sm"
             />
-            <div className = "pl-2">
+            <div className = "px-2">
+                {/* Filter By Dropdown  */}
                 <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="ml-auto">
@@ -115,7 +120,12 @@ export function DataTable<TData, TValue>({
                 </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-        
+
+            <Button variant="outline" className="rounded-full" onClick={onAnalyzePending}>
+                <TbAnalyze/> Analyze All Pending Leads
+            </Button>
+                    
+            {/* Column Visibility Dropdown  */}
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
