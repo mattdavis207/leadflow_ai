@@ -10,7 +10,7 @@ Leadflow AI is a full-stack lead intake and analysis dashboard. It imports custo
   Your browser does not support the video tag.
 </video>
 
-[Watch the demo video](/public/demo/Demo_Video_Leadflow_AI.mp4)
+[Watch the demo video](https://github.com/user-attachments/assets/3474eb9c-a287-49f1-9f80-c7c66636c338)
 
 ### Screenshots
 
